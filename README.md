@@ -1,5 +1,5 @@
 # IM920SL
-Interplan [IM920SL series](http://www.interplan.co.jp/solution/wireless/im920SL.php) wrapper for Arduino and openFrameworks
+Interplan [IM920SL series](https://www.interplan.co.jp/solution/wireless/im920sl/) wrapper for Arduino and openFrameworks
 
 ## Usage
 ### Set up IM920SL
