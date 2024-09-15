@@ -31,110 +31,110 @@ public:
 
   // IM92j0 info
   void uniqueID() {
-    append(CMD::Cmd<CMD::TYPE::INFO>::UNIQUE_ID);
+    append(CMD::Cmd<CMD::TYPE::INFO>::UNIQUE_ID, 5);
     write();
   }
 
   void rssi() {
-    append(CMD::Cmd<CMD::TYPE::INFO>::RSSI);
+    append(CMD::Cmd<CMD::TYPE::INFO>::RSSI, 5);
     write();
   }
 
   void version() {
-    append(CMD::Cmd<CMD::TYPE::INFO>::VERSION);
+    append(CMD::Cmd<CMD::TYPE::INFO>::VERSION, 5);
     write();
   }
 
   void dump() {
-    append(CMD::Cmd<CMD::TYPE::INFO>::ALL);
+    append(CMD::Cmd<CMD::TYPE::INFO>::ALL, 5);
     write();
   }
 
   // IM920SL control
   void baudrate(const BAUDRATE &baud) {
-    append(CMD::Cmd<CMD::TYPE::CTRL>::BAUDRATE);
+    append(CMD::Cmd<CMD::TYPE::CTRL>::BAUDRATE, 5);
     append(baud);
     write();
   }
 
   void reset() {
-    append(CMD::Cmd<CMD::TYPE::CTRL>::RESET);
+    append(CMD::Cmd<CMD::TYPE::CTRL>::RESET, 5);
     write();
   }
 
   void clearSettings() {
-    append(CMD::Cmd<CMD::TYPE::CTRL>::CLEAR_SETTINGS);
+    append(CMD::Cmd<CMD::TYPE::CTRL>::CLEAR_SETTINGS, 5);
     write();
   }
 
   // enable / disable function
   void writable(const bool b) {
     if (b)
-      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_SAVE);
+      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_SAVE, 5);
     else
-      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_SAVE);
+      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_SAVE, 5);
     write();
   }
 
   void charIO(const bool b) {
     if (b)
-      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_CHAR_IO);
+      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_CHAR_IO, 5);
     else
-      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_CHAR_IO);
+      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_CHAR_IO, 5);
     write();
   }
 
   void sleep(const bool b) {
     if (b)
-      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_SLEEP);
+      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_SLEEP, 5);
     else
-      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_SLEEP);
+      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_SLEEP, 5);
     write();
   }
 
   void answerback(const bool b) {
     if (b)
-      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_ANSWER_BACK);
+      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_ANSWER_BACK, 5);
     else
-      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_ANSWER_BACK);
+      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_ANSWER_BACK, 5);
     write();
   }
 
   void repeater(const bool b) {
     if (b)
-      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_REPEATER);
+      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_REPEATER, 5);
     else
-      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_REPEATER);
+      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_REPEATER, 5);
     write();
   }
 
   // settings
   void node() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_NODE);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::R_NODE, 5);
     write();
   }
   void node(uint8_t node) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_NODE);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::W_NODE, 5);
     append(node);
     write();
   }
 
   void recvID() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_RECEIVE_ID);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::R_RECEIVE_ID, 5);
     write();
   }
   void recvID(uint16_t id) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_RECEIVE_ID);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::W_RECEIVE_ID, 5);
     append(id);
     write();
   }
 
   void channel() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_CHANNEL);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::R_CHANNEL, 5);
     write();
   }
   void channel(const CHANNEL channel) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_CHANNEL);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::W_CHANNEL, 5);
     if (channel < 10)
       append("0", 1);
     append((uint8_t)channel, 10);
@@ -142,41 +142,41 @@ public:
   }
 
   void power() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_RF_POWER);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::R_RF_POWER, 5);
     write();
   }
   void power(const RF_POWER power) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_RF_POWER);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::W_RF_POWER, 5);
     append((uint8_t)power, 10);
     write();
   }
 
   void rate() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_RF_RATE);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::R_RF_RATE, 5);
     write();
   }
   void rate(RF_RATE rate) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_RF_RATE);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::W_RF_RATE, 5);
     append((uint8_t)rate, 10);
     write();
   }
 
   void sleepTime() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_SLEEP_TIME);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::R_SLEEP_TIME, 5);
     write();
   }
   void sleepTime(uint16_t ms) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_SLEEP_TIME);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::W_SLEEP_TIME, 5);
     append(ms);
     write();
   }
 
   void waitTime() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_WAIT_TIME);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::R_WAIT_TIME, 5);
     write();
   }
   void waitTime(uint16_t ms) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_WAIT_TIME);
+    append(CMD::Cmd<CMD::TYPE::SETTING>::W_WAIT_TIME, 5);
     append(ms);
     write();
   }
@@ -187,21 +187,21 @@ public:
   template <typename First, typename... Rest>
   void send(First &&first, Rest &&...args) {
     if (empty())
-      append(CMD::Cmd<CMD::TYPE::SEND>::MULTI_BYTES);
+      append(CMD::Cmd<CMD::TYPE::SEND>::MULTI_BYTES, 5);
     append(first);
     send(args...);
   }
 
   template <typename T> Sender<S> &operator<<(const T &arg) {
     if (empty())
-      append(CMD::Cmd<CMD::TYPE::SEND>::MULTI_BYTES);
+      append(CMD::Cmd<CMD::TYPE::SEND>::MULTI_BYTES, 5);
     append(arg);
     return *this;
   }
 
   Sender<S> &operator<<(const char *arg) {
     if (empty())
-      append(CMD::Cmd<CMD::TYPE::SEND>::MULTI_BYTES);
+      append(CMD::Cmd<CMD::TYPE::SEND>::MULTI_BYTES, 5);
     append(arg, sizeof(arg));
     return *this;
   }
@@ -253,7 +253,7 @@ protected:
 #endif
 
   template <typename T> void append(const T &n, uint8_t base = 16);
-  void append(const char *c) { asc_buffer += c; }
+  void append(const char *c, const uint8_t size) { asc_buffer += c; }
 
   void delimiter() { append("\r\n", 2); }
 
