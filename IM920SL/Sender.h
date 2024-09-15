@@ -1,18 +1,7 @@
 #ifndef IM920SL_SENDER_H
 #define IM920SL_SENDER_H
 
-#if defined(TEENSYDUINO) || defined(ESP_PLATFORM) || defined(ESP8266)
 #include "Arduino.h"
-#include <cstdint>
-#include <type_traits>
-#elif defined(__AVR__)
-#include "Arduino.h"
-#elif defined OF_VERSION_MAJOR
-#include "ofMain.h"
-#include <string>
-#else
-#error THIS PLATFORM IS NOT SUPPORTED
-#endif
 #include "IM920SLCommands.h"
 #include "IM920SLSettings.h"
 
@@ -177,46 +166,26 @@ public:
   template <typename First, typename... Rest>
   void send(First &&first, Rest &&...args) {
     if (empty())
-      append(CMD::Cmd<CMD::TYPE::SEND>::MULTI_BYTES, 5);
+      append(CMD::Cmd<CMD::TYPE::SEND>::BROADCAST, 5);
     append(first);
     send(args...);
   }
 
   template <typename T> Sender<S> &operator<<(const T &arg) {
     if (empty())
-      append(CMD::Cmd<CMD::TYPE::SEND>::MULTI_BYTES, 5);
+      append(CMD::Cmd<CMD::TYPE::SEND>::BROADCAST, 5);
     append(arg);
     return *this;
   }
 
   Sender<S> &operator<<(const char *arg) {
     if (empty())
-      append(CMD::Cmd<CMD::TYPE::SEND>::MULTI_BYTES, 5);
+      append(CMD::Cmd<CMD::TYPE::SEND>::BROADCAST, 5);
     append(arg, sizeof(arg));
     return *this;
   }
 
 protected:
-#if defined(TEENSYDUINO) || defined(ESP_PLATFORM) || defined(ESP8266)
-
-  using StringType = String;
-
-  template <
-      typename T,
-      typename std::enable_if<std::is_integral<
-          typename std::remove_reference<T>::type>::value>::type * = nullptr>
-  String toHex(const T &value) {
-    size_t size = sizeof(T) * 2;
-    String format = "%0" + String(size) + "X";
-    char hex[size + 1];
-    sprintf(hex, format.c_str(), value);
-    return String(hex);
-  }
-
-  bool empty() { return (asc_buffer.length() == 0); }
-
-#elif defined(__AVR__)
-
   using StringType = String;
 
   // works correctly only for integer
@@ -230,18 +199,6 @@ protected:
 
   bool empty() { return (asc_buffer.length() == 0); }
 
-#elif defined OF_VERSION_MAJOR
-
-  using StringType = std::string;
-
-  bool empty() { return asc_buffer.empty(); }
-
-#else
-
-#error THIS PLATFORM IS NOT SUPPORTED
-
-#endif
-
   template <typename T> void append(const T &n, uint8_t base = 16);
   void append(const char *c, const uint8_t size) { asc_buffer += c; }
 
@@ -252,9 +209,6 @@ protected:
   S *stream;
   StringType asc_buffer{""};
 };
-
-#if defined(TEENSYDUINO) || defined(__AVR__) || defined(ESP_PLATFORM) ||       \
-    defined(ESP8266)
 
 template <> void Sender<Stream>::write() {
   delimiter();
@@ -276,37 +230,6 @@ void Sender<Stream>::append(const T &n, uint8_t base) {
   }
   asc_buffer += s;
 }
-
-#elif defined(OF_VERSION_MAJOR)
-
-template <> void Sender<ofSerial>::write() {
-  delimiter();
-  stream->writeBytes((unsigned char *)asc_buffer.c_str(), asc_buffer.length());
-  asc_buffer.clear();
-}
-
-template <>
-template <typename T>
-void Sender<ofSerial>::append(const T &n, uint8_t base) {
-  stringstream ss;
-  if (base == 16)
-    ss << std::hex;
-  else if (base == 10)
-    ss << std::dec;
-  else {
-    ofLogError("invalid base parameter");
-    return;
-  }
-  ss << std::setw(sizeof(T) * 2) << std::setfill('0') << (size_t)n;
-  asc_buffer += ss.str();
-}
-
-#else
-
-#error THIS PLATFORM IS NOT SUPPORTED
-
-#endif
-
 } // namespace IM920SLCtrl
 
 #endif /* IM920SL_SENDER_H */

@@ -1,17 +1,7 @@
 #ifndef RECEIVER_H
 #define RECEIVER_H
 
-#if defined(TEENSYDUINO) || defined(ESP_PLATFORM) || defined(ESP8266)
 #include "Arduino.h"
-#include <algorithm>
-#include <cstdint>
-#elif defined(__AVR__)
-#include "Arduino.h"
-#elif defined OF_VERSION_MAJOR
-#include "ofMain.h"
-#else
-#error THIS PLATFORM IS NOT SUPPORTED
-#endif
 
 namespace IM920SLCtrl {
 
@@ -147,9 +137,6 @@ protected:
   bool is_available{false};
 };
 
-#if defined(TEENSYDUINO) || defined(__AVR__) || defined(ESP_PLATFORM) ||       \
-    defined(ESP8266)
-
 template <> void Receiver<Stream>::print() {
   Serial.print(remoteNode(), HEX);
   Serial.print(",");
@@ -169,32 +156,6 @@ template <> uint8_t Receiver<Stream>::readByte() {
 }
 
 template <> void Receiver<Stream>::verbose(const char *c) { Serial.print(c); }
-
-#elif defined(OF_VERSION_MAJOR)
-
-template <> void Receiver<ofSerial>::print() {
-  std::stringstream ss;
-  ss << hex << std::setw(2) << std::setfill('0');
-  ss << (int)remoteNode() << ",";
-  ss << (int)remoteUID() << ",";
-  ss << (int)remoteRSSI() << ":";
-  for (size_t i = 1; i < size(); ++i)
-    ss << (int)data(i - 1) << ",";
-  ss << (int)data(size() - 1) << endl;
-  cout << ss.str() << endl;
-}
-
-template <> uint8_t Receiver<ofSerial>::readByte() {
-  return (uint8_t)stream->readByte();
-}
-
-template <> void Receiver<ofSerial>::verbose(const char *c) { cout << c; }
-
-#else
-
-#error THIS PLATFORM IS NOT SUPPORTED
-
-#endif
 
 } // namespace IM920SLCtrl
 

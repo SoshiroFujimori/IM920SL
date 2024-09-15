@@ -59,9 +59,9 @@ void setup() {
   WaitForResponse(response_wait_ms);
   im920SL.clearSettings();
   WaitForResponse(response_wait_ms);
-  im920SL.eraseID();
+  //im920SL.eraseID();
   WaitForResponse(response_wait_ms);
-  im920SL.recvID(0x1234);
+  //im920SL.recvID(0x1234);
   WaitForResponse(response_wait_ms);
   im920SL.channel(IM920SLParam::CHANNEL::CH36_923_0MHZ);
   WaitForResponse(response_wait_ms);
@@ -81,7 +81,7 @@ void loop() {
   if (millis() - prev_ms > 1000) {
     // append data to buffer & send
     im920SL << "test" << 1;
-    im920SL << "data" << 2 << 3;
+    im920SL << "data" << 2 << 3 << 4;
     im920SL.send();
 
     delay(100);
