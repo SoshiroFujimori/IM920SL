@@ -119,16 +119,6 @@ public:
     write();
   }
 
-  void recvID() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_RECEIVE_ID, 5);
-    write();
-  }
-  void recvID(uint16_t id) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_RECEIVE_ID, 5);
-    append(id);
-    write();
-  }
-
   void channel() {
     append(CMD::Cmd<CMD::TYPE::SETTING>::R_CHANNEL, 5);
     write();
