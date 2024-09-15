@@ -8,7 +8,7 @@ enum TYPE { INFO, CTRL, FUNC, SETTING, SEND };
 
 template <TYPE> struct Cmd {};
 
-// 情報関連コマンド
+// Information-related commands
 template <> struct Cmd<INFO> {
   static constexpr const char *UNIQUE_ID = "RDID ";
   static constexpr const char *RSSI = "RDRS ";
@@ -16,14 +16,14 @@ template <> struct Cmd<INFO> {
   static constexpr const char *ALL = "RPRM ";
 };
 
-// 制御関連コマンド
+// Control-related commands
 template <> struct Cmd<CTRL> {
   static constexpr const char *BAUDRATE = "SBRT ";
   static constexpr const char *RESET = "SRST ";
   static constexpr const char *CLEAR_SETTINGS = "PCLR ";
 };
 
-// 機能関連コマンド
+// Function-related commands
 template <> struct Cmd<FUNC> {
   static constexpr const char *EN_SAVE = "ENWR ";
   static constexpr const char *DS_SAVE = "DSWR ";
@@ -39,7 +39,7 @@ template <> struct Cmd<FUNC> {
   static constexpr const char *DS_REPEATER = "DRPT ";
 };
 
-// 設定関連コマンド
+// Setting-related commands
 template <> struct Cmd<SETTING> {
   static constexpr const char *W_NODE = "STNN ";
   static constexpr const char *R_NODE = "RDNN ";
@@ -59,7 +59,7 @@ template <> struct Cmd<SETTING> {
   static constexpr const char *R_WAIT_TIME = "RWTM ";
 };
 
-// 送信関連コマンド
+// Sending-related commands
 template <> struct Cmd<SEND> {
   static constexpr const char *BROADCAST_FIXED = "TXDT ";
   static constexpr const char *BROADCAST = "TXDA ";
