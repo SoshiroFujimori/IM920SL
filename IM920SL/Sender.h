@@ -57,11 +57,6 @@ public:
     write();
   }
 
-  void eraseID() {
-    append(CMD::Cmd<CMD::TYPE::CTRL>::ERASE_ID, 5);
-    write();
-  }
-
   void reset() {
     append(CMD::Cmd<CMD::TYPE::CTRL>::RESET, 5);
     write();
