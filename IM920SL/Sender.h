@@ -7,229 +7,284 @@
 
 namespace IM920SLCtrl {
 
-template <typename S> class Sender {
+class Sender {
 public:
   Sender() {}
   ~Sender() {}
 
-  bool setup(S &s) {
+  bool setup(Stream &s) {
     stream = &s;
     stream->flush();
     return true;
   }
 
-  // IM92j0 info
+  // IM920 info
   void uniqueID() {
-    append(CMD::Cmd<CMD::TYPE::INFO>::UNIQUE_ID, 5);
+    appendStr(CMD::Cmd<CMD::TYPE::INFO>::UNIQUE_ID);
     write();
   }
 
   void rssi() {
-    append(CMD::Cmd<CMD::TYPE::INFO>::RSSI, 5);
+    appendStr(CMD::Cmd<CMD::TYPE::INFO>::RSSI);
     write();
   }
 
   void version() {
-    append(CMD::Cmd<CMD::TYPE::INFO>::VERSION, 5);
+    appendStr(CMD::Cmd<CMD::TYPE::INFO>::VERSION);
     write();
   }
 
-  void dump() {
-    append(CMD::Cmd<CMD::TYPE::INFO>::ALL, 5);
+  void all() {
+    appendStr(CMD::Cmd<CMD::TYPE::INFO>::ALL);
     write();
   }
 
   // IM920SL control
   void baudrate(const BAUDRATE &baud) {
-    append(CMD::Cmd<CMD::TYPE::CTRL>::BAUDRATE, 5);
-    append(baud);
-    write();
+    appendStr(CMD::Cmd<CMD::TYPE::CTRL>::BAUDRATE);
+    appendInt((int)baud, DEC, 1);
   }
 
   void reset() {
-    append(CMD::Cmd<CMD::TYPE::CTRL>::RESET, 5);
+    appendStr(CMD::Cmd<CMD::TYPE::CTRL>::RESET);
     write();
   }
 
   void clearSettings() {
-    append(CMD::Cmd<CMD::TYPE::CTRL>::CLEAR_SETTINGS, 5);
+    appendStr(CMD::Cmd<CMD::TYPE::CTRL>::CLEAR_SETTINGS);
     write();
   }
 
   // enable / disable function
-  void writable(const bool b) {
+  void write(const bool b) {
     if (b)
-      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_SAVE, 5);
+      appendStr(CMD::Cmd<CMD::TYPE::FUNC>::EN_WRITE);
     else
-      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_SAVE, 5);
+      appendStr(CMD::Cmd<CMD::TYPE::FUNC>::EN_WRITE);
     write();
   }
 
   void charIO(const bool b) {
     if (b)
-      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_CHAR_IO, 5);
+      appendStr(CMD::Cmd<CMD::TYPE::FUNC>::EN_CHAR_IO);
     else
-      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_CHAR_IO, 5);
+      appendStr(CMD::Cmd<CMD::TYPE::FUNC>::DS_CHAR_IO);
     write();
   }
 
   void sleep(const bool b) {
     if (b)
-      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_SLEEP, 5);
+      appendStr(CMD::Cmd<CMD::TYPE::FUNC>::EN_SLEEP);
     else
-      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_SLEEP, 5);
+      appendStr(CMD::Cmd<CMD::TYPE::FUNC>::DS_SLEEP);
+    write();
+  }
+
+  void retry(const bool b) {
+    if (b)
+      appendStr(CMD::Cmd<CMD::TYPE::FUNC>::EN_RETRY);
+    else
+      appendStr(CMD::Cmd<CMD::TYPE::FUNC>::DS_RETRY);
     write();
   }
 
   void answerback(const bool b) {
     if (b)
-      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_ANSWER_BACK, 5);
+      appendStr(CMD::Cmd<CMD::TYPE::FUNC>::EN_ANSWER_BACK);
     else
-      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_ANSWER_BACK, 5);
+      appendStr(CMD::Cmd<CMD::TYPE::FUNC>::DS_ANSWER_BACK);
     write();
   }
 
   void repeater(const bool b) {
     if (b)
-      append(CMD::Cmd<CMD::TYPE::FUNC>::EN_REPEATER, 5);
+      appendStr(CMD::Cmd<CMD::TYPE::FUNC>::EN_REPEATER);
     else
-      append(CMD::Cmd<CMD::TYPE::FUNC>::DS_REPEATER, 5);
+      appendStr(CMD::Cmd<CMD::TYPE::FUNC>::DS_REPEATER);
     write();
   }
 
   // settings
   void node() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_NODE, 5);
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::R_NODE);
     write();
   }
   void node(uint8_t node) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_NODE, 5);
-    append(node);
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::W_NODE);
+    appendInt(node, HEX, 4);
+    write();
+  }
+
+  void destNode() {
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::R_DEST_NODE);
+    write();
+  }
+  void destNode(uint16_t node) {
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::W_DEST_NODE);
+    appendInt(node, HEX, 4);
+    write();
+  }
+
+  void groupNumber() {
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::R_GROUP);
+    write();
+  }
+  void groupMake() {
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::W_GROUP);
     write();
   }
 
   void channel() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_CHANNEL, 5);
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::R_CHANNEL);
     write();
   }
   void channel(const CHANNEL channel) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_CHANNEL, 5);
-    if (channel < 10)
-      append("0", 1);
-    append((uint8_t)channel, 10);
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::W_CHANNEL);
+    appendInt((int)channel, DEC, 2);
     write();
   }
 
   void power() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_RF_POWER, 5);
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::R_RF_POWER);
     write();
   }
   void power(const RF_POWER power) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_RF_POWER, 5);
-    append((uint8_t)power, 10);
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::W_RF_POWER);
+    appendInt((int)power, DEC, 1);
     write();
   }
 
   void rate() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_RF_RATE, 5);
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::R_RF_RATE);
     write();
   }
   void rate(RF_RATE rate) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_RF_RATE, 5);
-    append((uint8_t)rate, 10);
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::W_RF_RATE);
+    appendInt((int)rate, DEC, 1);
     write();
   }
 
   void sleepTime() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_SLEEP_TIME, 5);
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::R_SLEEP_TIME);
     write();
   }
   void sleepTime(uint16_t ms) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_SLEEP_TIME, 5);
-    append(ms);
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::W_SLEEP_TIME);
+    appendInt(ms, HEX, 4);
     write();
   }
 
   void waitTime() {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::R_WAIT_TIME, 5);
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::R_WAIT_TIME);
     write();
   }
   void waitTime(uint16_t ms) {
-    append(CMD::Cmd<CMD::TYPE::SETTING>::W_WAIT_TIME, 5);
-    append(ms);
+    appendStr(CMD::Cmd<CMD::TYPE::SETTING>::W_WAIT_TIME);
+    appendInt(ms, HEX, 4);
     write();
   }
 
   // send data
-  void send() { write(); }
-
-  template <typename First, typename... Rest>
-  void send(First &&first, Rest &&...args) {
-    if (empty())
-      append(CMD::Cmd<CMD::TYPE::SEND>::BROADCAST, 5);
-    append(first);
-    send(args...);
+  // broadcast
+  // 固定長(int、float、structなど)のデータを送信する
+  template <typename T>
+  void broadcastFixedVar(const T &arg, bool isTXDT = false) {
+    appendStr(isTXDT ? CMD::Cmd<CMD::TYPE::SEND>::BROADCAST_FIXED
+                     : CMD::Cmd<CMD::TYPE::SEND>::BROADCAST);
+    appendBin(arg, sizeof(T));
+    write();
   }
 
-  template <typename T> Sender<S> &operator<<(const T &arg) {
-    if (empty())
-      append(CMD::Cmd<CMD::TYPE::SEND>::BROADCAST, 5);
-    append(arg);
-    return *this;
+  // 文字列を送信する
+  void broadcastString(const char *str) {
+    appendStr(CMD::Cmd<CMD::TYPE::SEND>::BROADCAST);
+    appendStr(str);
+    write();
   }
 
-  Sender<S> &operator<<(const char *arg) {
-    if (empty())
-      append(CMD::Cmd<CMD::TYPE::SEND>::BROADCAST, 5);
-    append(arg, sizeof(arg));
-    return *this;
+  // unicast
+  // 固定長(int、float、structなど)のデータを送信する
+  template <typename T> void unicastFixedVar(uint8_t node, const T &arg) {
+    appendStr(CMD::Cmd<CMD::TYPE::SEND>::UNICAST);
+    appendInt(node, HEX, 2); // todo: fix sending format
+    appendBin(arg, sizeof(T));
+    write();
   }
 
-protected:
-  using StringType = String;
-
-  // works correctly only for integer
-  template <typename T> String toHex(const T &value) {
-    size_t size = sizeof(T) * 2;
-    String format = "%0" + String(size) + "X";
-    char hex[size + 1];
-    sprintf(hex, format.c_str(), value);
-    return String(hex);
+  // 文字列を送信する
+  void unicastString(uint8_t node, const char *str) {
+    appendStr(CMD::Cmd<CMD::TYPE::SEND>::UNICAST);
+    appendInt(node, HEX, 2); // todo: fix sending format
+    appendStr(str);
+    write();
   }
 
-  bool empty() { return (asc_buffer.length() == 0); }
-
-  template <typename T> void append(const T &n, uint8_t base = 16);
-  void append(const char *c, const uint8_t size) { asc_buffer += c; }
-
-  void delimiter() { append("\r\n", 2); }
-
-  void write();
-
-  S *stream;
-  StringType asc_buffer{""};
-};
-
-template <> void Sender<Stream>::write() {
-  delimiter();
-  stream->write(asc_buffer.c_str(), asc_buffer.length());
-  asc_buffer.remove(0, asc_buffer.length());
-}
-
-template <>
-template <typename T>
-void Sender<Stream>::append(const T &n, uint8_t base) {
-  String s;
-  if (base == 16)
-    s = toHex(n);
-  else if (base == 10)
-    s = String(n, DEC);
-  else {
-    Serial.println("invalid base parameter");
-    return;
+  // send back
+  // 固定長(int、float、structなど)のデータを送信する
+  template <typename T> void sendBackFixedVar(const T &arg) {
+    appendStr(CMD::Cmd<CMD::TYPE::SEND>::SEND_BACK);
+    appendBin(arg, sizeof(T)); // todo: fix sending format
+    write();
   }
-  asc_buffer += s;
-}
+
+  // 文字列を送信する
+  void sendBackString(const char *str) {
+    appendStr(CMD::Cmd<CMD::TYPE::SEND>::SEND_BACK);
+    appendStr(str);
+    write();
+  }
+
+  // delegate
+  // 固定長(int、float、structなど)のデータを送信する
+  template <typename T> void delegateFixedVar(uint8_t node, const T &arg) {
+    appendStr(CMD::Cmd<CMD::TYPE::SEND>::DELEGATE);
+    appendInt(node, HEX, 2); // todo: fix sending format
+    appendBin(arg, sizeof(T));
+    write();
+  }
+
+  // 文字列を送信する
+  void delegateString(uint8_t node, const char *str) {
+    appendStr(CMD::Cmd<CMD::TYPE::SEND>::DELEGATE);
+    appendInt(node, HEX, 2); // todo: fix sending format
+    appendStr(str);
+    write();
+  }
+
+private:
+  void delimiter() { asc_buffer += "\r\n"; }
+  bool empty() { return asc_buffer.length() == 0; }
+
+  void appendBin(uintptr_t address, size_t size) {
+    uint8_t *data = reinterpret_cast<uint8_t *>(address);
+    for (size_t i = 0; i < size; i++) {
+      // 16進数で送信
+      char hex[3]; // 2桁の16進数と終端文字
+      snprintf(hex, sizeof(hex), "%02X", data[i]);
+      asc_buffer += hex;
+    }
+  }
+  void appendInt(int i, int base, int width) {
+    char buf[width + 1];
+    if (base == DEC)
+      snprintf(buf, sizeof(buf), "%*d", width, i);
+    else if (base == HEX)
+      snprintf(buf, sizeof(buf), "%*X", width, i);
+    else
+      return;
+    asc_buffer += buf;
+  }
+  void appendStr(const char *str) { asc_buffer += str; }
+
+  void write() {
+    delimiter();
+    stream->write(asc_buffer.c_str(), asc_buffer.length());
+    asc_buffer.remove(0, asc_buffer.length());
+  }
+
+  Stream *stream;
+  String asc_buffer{""};
+}; // class Sender
 } // namespace IM920SLCtrl
 
 #endif /* IM920SL_SENDER_H */

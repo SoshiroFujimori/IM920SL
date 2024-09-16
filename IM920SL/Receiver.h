@@ -5,7 +5,7 @@
 
 namespace IM920SLCtrl {
 
-template <typename S> class Receiver {
+class Receiver {
   // response format
 
   // OK<CR><LF>
@@ -20,7 +20,7 @@ public:
         is_available(false) {};
   inline ~Receiver() {};
 
-  bool setup(S &s) {
+  bool setup(Stream &s) {
     stream = &s;
     stream->flush();
     return true;
@@ -56,12 +56,24 @@ public:
 
   uint8_t size() { return bin_buffer.size; }
 
-  void print();
+  void print() {
+    Serial.print(remoteNode(), HEX);
+    Serial.print(",");
+    Serial.print(remoteUID(), HEX);
+    Serial.print(",");
+    Serial.print(remoteRSSI(), HEX);
+    Serial.print(":");
+    for (uint8_t i = 0; i < size() - 1; ++i) {
+      Serial.print(data(i), HEX);
+      Serial.print(",");
+    }
+    Serial.println(data(size() - 1), HEX);
+  }
 
-protected:
-  uint8_t readByte();
+private:
+  uint8_t readByte() { return (uint8_t)stream->read(); }
 
-  void verbose(const char *c);
+  void verbose(const char *c) { Serial.print(c); }
 
   void parse() {
     if (asc_buffer.bytes[3] == '\n') {
@@ -130,32 +142,12 @@ protected:
     uint8_t size;
   };
 
-  S *stream;
+  Stream *stream;
   RecvAsciiBuffer asc_buffer;
   RecvBinBuffer bin_buffer;
   uint8_t read_count{0};
   bool is_available{false};
 };
-
-template <> void Receiver<Stream>::print() {
-  Serial.print(remoteNode(), HEX);
-  Serial.print(",");
-  Serial.print(remoteUID(), HEX);
-  Serial.print(",");
-  Serial.print(remoteRSSI(), HEX);
-  Serial.print(":");
-  for (uint8_t i = 0; i < size() - 1; ++i) {
-    Serial.print(data(i), HEX);
-    Serial.print(",");
-  }
-  Serial.println(data(size() - 1), HEX);
-}
-
-template <> uint8_t Receiver<Stream>::readByte() {
-  return (uint8_t)stream->read();
-}
-
-template <> void Receiver<Stream>::verbose(const char *c) { Serial.print(c); }
 
 } // namespace IM920SLCtrl
 

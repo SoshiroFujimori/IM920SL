@@ -1,8 +1,8 @@
 #include "IM920SL.h"
 
 IM920SL im920SL;
-const size_t usb_baudrate = 115200;
-const size_t im920SL_baudrate = 19200;
+const unsigned long usb_baudrate = 115200;
+const unsigned long im920SL_baudrate = 19200;
 
 const uint32_t response_wait_ms = 500;
 uint32_t prev_ms = 0;
@@ -29,7 +29,7 @@ void HandleResponse() {
     Serial.print(":");
 
     // get & handle received data
-    for (size_t i = 0; i < im920SL.size() - 1; ++i) {
+    for (uint8_t i = 0; i < im920SL.size() - 1; ++i) {
       Serial.print(im920SL.data(i), HEX);
       Serial.print(",");
     }
@@ -55,17 +55,17 @@ void setup() {
   Serial.println("write setting start");
 
   // write settings to IM920SL
-  im920SL.writable(true);
+  im920SL.write(true);
   WaitForResponse(response_wait_ms);
   im920SL.clearSettings();
   WaitForResponse(response_wait_ms);
-  //im920SL.eraseID();
+  im920SL.node(1);
   WaitForResponse(response_wait_ms);
-  //im920SL.recvID(0x1234);
+  im920SL.groupMake();
   WaitForResponse(response_wait_ms);
-  im920SL.channel(IM920SLParam::CHANNEL::CH36_923_0MHZ);
+  im920SL.channel(IM920SLParam::CHANNEL::CH360S_923_2MHz);
   WaitForResponse(response_wait_ms);
-  im920SL.power(IM920SLParam::RF_POWER::POWER_10_0_mW);
+  im920SL.power(IM920SLParam::RF_POWER::POWER_10_mW);
   WaitForResponse(response_wait_ms);
   im920SL.rate(IM920SLParam::RF_RATE::RATE_FAST);
   WaitForResponse(response_wait_ms);
@@ -80,14 +80,10 @@ void loop() {
 
   if (millis() - prev_ms > 1000) {
     // append data to buffer & send
-    im920SL << "test" << 1;
-    im920SL << "data" << 2 << 3 << 4;
-    im920SL.send();
+    im920SL.broadcastString("hello");
+    im920SL.broadcastString("send");
 
     delay(100);
-
-    // send in one line
-    im920SL.send(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
     prev_ms = millis();
   }

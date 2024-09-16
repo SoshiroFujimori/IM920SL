@@ -25,8 +25,8 @@ template <> struct Cmd<CTRL> {
 
 // Function-related commands
 template <> struct Cmd<FUNC> {
-  static constexpr const char *EN_SAVE = "ENWR ";
-  static constexpr const char *DS_SAVE = "DSWR ";
+  static constexpr const char *EN_WRITE = "ENWR ";
+  static constexpr const char *DS_WRITE = "DSWR ";
   static constexpr const char *EN_CHAR_IO = "ECIO ";
   static constexpr const char *DS_CHAR_IO = "DCIO ";
   static constexpr const char *EN_SLEEP = "DSRX ";
@@ -61,8 +61,8 @@ template <> struct Cmd<SETTING> {
 
 // Sending-related commands
 template <> struct Cmd<SEND> {
-  static constexpr const char *BROADCAST_FIXED = "TXDT ";
   static constexpr const char *BROADCAST = "TXDA ";
+  static constexpr const char *BROADCAST_FIXED = "TXDT ";
   static constexpr const char *UNICAST = "TXDU ";
   static constexpr const char *SEND_BACK = "TXSB ";
   static constexpr const char *DELEGATE = "TXDG ";
